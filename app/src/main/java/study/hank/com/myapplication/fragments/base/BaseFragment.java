@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,17 +54,18 @@ public abstract class BaseFragment extends Fragment {
      * 懒加载
      */
     private void onLazyLoad() {
-        if (!isPrepared || !isVisible) {//如果同时为true，则不会return。 一个true，一个false，则会return，同时为true，会return
-            return;
+        if (isPrepared && isVisible) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    processBar.setVisibility(View.GONE);
+                    isPrepared = false;//懒加载，只加载一次,这句话要不要，就具体看需求
+                    initData();
+                }
+            }, 3000);
+        } else {
+            Log.d("onLazyLoadTag","拒绝执行initData，因为条件不满足");
         }
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                processBar.setVisibility(View.GONE);
-                isPrepared = false;//懒加载，只加载一次,这句话要不要，就具体看需求
-                initData();
-            }
-        }, 3000);
     }
 
     protected abstract void initData();
