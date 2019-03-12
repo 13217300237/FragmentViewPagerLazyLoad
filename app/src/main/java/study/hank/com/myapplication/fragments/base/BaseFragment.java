@@ -53,7 +53,7 @@ public abstract class BaseFragment extends Fragment {
      * 懒加载
      */
     private void onLazyLoad() {
-        if (isPrepared && isVisible) {// 判定两个标志是否都为true，只有都为true，才不会return掉
+        if (!isPrepared || !isVisible) {//如果同时为true，则不会return。 一个true，一个false，则会return，同时为true，会return
             return;
         }
         mHandler.postDelayed(new Runnable() {
